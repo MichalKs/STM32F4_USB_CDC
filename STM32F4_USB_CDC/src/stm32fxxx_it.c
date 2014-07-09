@@ -32,22 +32,9 @@
 #include "usb_core.h"
 #include "usbd_core.h"
 
-#if defined (USE_STM322xG_EVAL)
- #include "stm322xg_eval.h"
- #include "stm322xg_eval_ioe.h"
-#elif defined(USE_STM324xG_EVAL)
- #include "stm324xg_eval.h"
- #include "stm324xg_eval_ioe.h"
-#elif defined (USE_STM3210C_EVAL)
- #include "stm3210c_eval.h"
- #include "stm3210c_eval_ioe.h"
-#else
- #error "Missing define: Evaluation board (ie. USE_STM322xG_EVAL)"
-#endif
-
 #include "usbd_cdc_core.h"
 
-#include "lcd_log.h"
+
 
 
 /* Private typedef -----------------------------------------------------------*/

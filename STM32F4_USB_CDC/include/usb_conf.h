@@ -37,10 +37,6 @@
  #include "stm322xg_eval_sdio_sd.h"
 #elif defined(USE_STM324xG_EVAL)
  #include "stm32f4xx.h"
- #include "stm324xg_eval.h"
- #include "stm324xg_eval_lcd.h"
- #include "stm324xg_eval_ioe.h"
- #include "stm324xg_eval_sdio_sd.h"
 #elif defined (USE_STM3210C_EVAL)
  #include "stm32f10x.h"
  #include "stm3210c_eval.h" 

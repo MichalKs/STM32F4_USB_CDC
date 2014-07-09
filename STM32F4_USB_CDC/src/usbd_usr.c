@@ -28,7 +28,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_usr.h"
 #include "usbd_ioreq.h"
-#include "lcd_log.h"
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
 * @{

@@ -84,7 +84,7 @@ CDC_IF_Prop_TypeDef VCP_fops =
   */
 static uint16_t VCP_Init(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+//  NVIC_InitTypeDef NVIC_InitStructure;
   
   /* EVAL_COM1 default configuration */
   /* EVAL_COM1 configured as follow:
@@ -95,12 +95,12 @@ static uint16_t VCP_Init(void)
         - Hardware flow control disabled
         - Receive and transmit enabled
   */
-  USART_InitStructure.USART_BaudRate = 115200;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_Odd;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+//  USART_InitStructure.USART_BaudRate = 115200;
+//  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+//  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+//  USART_InitStructure.USART_Parity = USART_Parity_Odd;
+//  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+//  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
   /* Configure and enable the USART */
 //  STM_EVAL_COMInit(COM1, &USART_InitStructure);
@@ -110,10 +110,10 @@ static uint16_t VCP_Init(void)
 
   /* Enable USART Interrupt */
 //  NVIC_InitStructure.NVIC_IRQChannel = EVAL_COM1_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+//  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+//  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+//  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//  NVIC_Init(&NVIC_InitStructure);
   
   return USBD_OK;
 }
