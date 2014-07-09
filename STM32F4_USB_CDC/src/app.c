@@ -96,22 +96,40 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE    USB_OTG_dev __ALIGN_END ;
   * @{
   */ 
 
+
+#include <stm32f4xx.h>
+#include <stdio.h>
+#include "timers.h"
+#include "led.h"
+#include "uart.h"
+
+#define SYSTICK_FREQ 1000 ///< Frequency of the SysTick.
+
+void softTimerCallback(void);
+
+
 /**
   * @brief  Program entry point
   * @param  None
   * @retval None
   */
-int main(void)
-{
-  __IO uint32_t i = 0;  
+int main(void) {
 
-  /*!< At this stage the microcontroller clock setting is already configured, 
-  this is done through SystemInit() function which is called from startup
-  file (startup_stm32fxxx_xx.s) before to branch to application main.
-  To reconfigure the default setting of SystemInit() function, refer to
-  system_stm32fxxx.c file
-  */  
- 
+  UART2_Init(); // Initialize USART2 (for printf)
+  TIMER_Init(SYSTICK_FREQ); // Initialize timer
+
+  LED_TypeDef led;
+  led.nr = LED0;
+  led.gpio = GPIOD;
+  led.pin = 12;
+  led.clk = RCC_AHB1Periph_GPIOD;
+
+  LED_Add(&led); // Add an LED
+  printf("Starting program\r\n");
+
+  int8_t timerID = TIMER_AddSoftTimer(200, softTimerCallback);
+  TIMER_StartSoftTimer(timerID);
+
   USBD_Init(&USB_OTG_dev,
 #ifdef USE_USB_OTG_HS 
             USB_OTG_HS_CORE_ID,
@@ -122,19 +140,21 @@ int main(void)
             &USBD_CDC_cb, 
             &USR_cb);
   
-  /* Main loop */
-  while (1)
-  {
-    if (i++ == 0x100000)
-    {
-//      STM_EVAL_LEDToggle(LED1);
-//      STM_EVAL_LEDToggle(LED2);
-//      STM_EVAL_LEDToggle(LED3);
-//      STM_EVAL_LEDToggle(LED4);
-      i = 0;
-    }
+
+  while (1) {
+
+    TIMER_SoftTimersUpdate();
   }
 } 
+
+/**
+ * @brief Callback for soft timer
+ */
+void softTimerCallback(void) {
+  LED_Toggle(LED0); // Toggle LED
+  printf("Test string sent from STM32F4!!!\r\n"); // Print test string
+
+}
 
 #ifdef USE_FULL_ASSERT
 /**

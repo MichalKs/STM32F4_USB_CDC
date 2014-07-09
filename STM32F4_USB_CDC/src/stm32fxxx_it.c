@@ -33,6 +33,7 @@
 #include "usbd_core.h"
 
 #include "usbd_cdc_core.h"
+#include <stdio.h>
 
 
 
@@ -142,18 +143,6 @@ void PendSV_Handler(void)
 {
 }
 
-/**
-  * @brief  This function handles SysTick Handler.
-  * @param  None
-  * @retval None
-  */
-void SysTick_Handler(void)
-{
-  /* Information panel */
-//  LCD_SetTextColor(Green);
-  //LCD_DisplayStringLine( LCD_PIXEL_HEIGHT - 42, USER_INFORMATION[x]);  
-//  LCD_SetTextColor(LCD_LOG_DEFAULT_COLOR);
-}
 
 /**
   * @brief  This function handles EXTI15_10_IRQ Handler.
@@ -168,6 +157,7 @@ void OTG_FS_WKUP_IRQHandler(void)
     *(uint32_t *)(0xE000ED10) &= 0xFFFFFFF9 ; 
     SystemInit();
     USB_OTG_UngateClock(&USB_OTG_dev);
+    printf("Woke up in OTG FS interrupt\r\n");
   }
   EXTI_ClearITPendingBit(EXTI_Line18);
 }
