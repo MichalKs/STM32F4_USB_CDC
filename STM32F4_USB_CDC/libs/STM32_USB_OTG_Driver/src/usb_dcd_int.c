@@ -21,7 +21,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_dcd_int.h"
-#include <stdio.h>
 /** @addtogroup USB_OTG_DRIVER
 * @{
 */
@@ -218,8 +217,6 @@ uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev)
   USB_OTG_GINTSTS_TypeDef  gintr_status;
   uint32_t retval = 0;
   
-  printf("In USB interrupt handler\r\n");
-
   if (USB_OTG_IsDeviceMode(pdev)) /* ensure that we are in device mode */
   {
     gintr_status.d32 = USB_OTG_ReadCoreItr(pdev);

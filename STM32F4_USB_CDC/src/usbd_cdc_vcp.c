@@ -32,6 +32,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_vcp.h"
 #include "usb_conf.h"
+#include <stdio.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -246,11 +247,14 @@ static uint16_t VCP_DataRx (uint8_t* Buf, uint32_t Len)
 {
   uint32_t i;
   
+
+
   for (i = 0; i < Len; i++)
   {
-//    USART_SendData(EVAL_COM1, *(Buf + i) );
-//    while(USART_GetFlagStatus(EVAL_COM1, USART_FLAG_TXE) == RESET);
+
+    printf("%c", *(Buf + i) );
   } 
+  printf("\r\n");
  
   return USBD_OK;
 }
