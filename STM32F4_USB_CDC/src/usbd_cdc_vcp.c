@@ -62,7 +62,7 @@ extern uint32_t APP_Rx_ptr_in;    /* Increment this pointer or roll it back to
 static uint16_t VCP_Init     (void);
 static uint16_t VCP_DeInit   (void);
 static uint16_t VCP_Ctrl     (uint32_t Cmd, uint8_t* Buf, uint32_t Len);
-static uint16_t VCP_DataTx   (uint8_t* Buf, uint32_t Len);
+uint16_t VCP_DataTx   (uint8_t* Buf, uint32_t Len);
 static uint16_t VCP_DataRx   (uint8_t* Buf, uint32_t Len);
 
 static uint16_t VCP_COMConfig(uint8_t Conf);
@@ -206,24 +206,39 @@ static uint16_t VCP_Ctrl (uint32_t Cmd, uint8_t* Buf, uint32_t Len)
   * @param  Len: Number of data to be sent (in bytes)
   * @retval Result of the opeartion: USBD_OK if all operations are OK else VCP_FAIL
   */
-static uint16_t VCP_DataTx (uint8_t* Buf, uint32_t Len)
-{
-  if (linecoding.datatype == 7)
-  {
-//    APP_Rx_Buffer[APP_Rx_ptr_in] = USART_ReceiveData(EVAL_COM1) & 0x7F;
+uint16_t VCP_DataTx (uint8_t* buf, uint32_t len) {
+
+  int i;
+
+  if (linecoding.datatype == 7) {
+    for (i=0; i< len; i++) {
+      APP_Rx_Buffer[APP_Rx_ptr_in] = buf[i] & 0x7F;
+
+      APP_Rx_ptr_in++;
+
+      /* To avoid buffer overflow */
+      if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
+      {
+        APP_Rx_ptr_in = 0;
+      }
+
+    }
+
+  } else if (linecoding.datatype == 8) {
+
+    for (i=0; i< len; i++) {
+      APP_Rx_Buffer[APP_Rx_ptr_in] = buf[i];
+
+      APP_Rx_ptr_in++;
+
+      /* To avoid buffer overflow */
+      if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
+      {
+        APP_Rx_ptr_in = 0;
+      }
+
+    }
   }
-  else if (linecoding.datatype == 8)
-  {
-//    APP_Rx_Buffer[APP_Rx_ptr_in] = USART_ReceiveData(EVAL_COM1);
-  }
-  
-  APP_Rx_ptr_in++;
-  
-  /* To avoid buffer overflow */
-  if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
-  {
-    APP_Rx_ptr_in = 0;
-  }  
   
   return USBD_OK;
 }
@@ -246,14 +261,12 @@ static uint16_t VCP_DataTx (uint8_t* Buf, uint32_t Len)
 static uint16_t VCP_DataRx (uint8_t* Buf, uint32_t Len)
 {
   uint32_t i;
-  
-
 
   for (i = 0; i < Len; i++)
   {
 
     printf("%c", *(Buf + i) );
-  } 
+  }
   printf("\r\n");
  
   return USBD_OK;

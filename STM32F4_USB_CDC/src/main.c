@@ -17,9 +17,11 @@
 
 #include <stm32f4xx.h>
 #include <stdio.h>
+#include <string.h>
 #include "timers.h"
 #include "led.h"
 #include "uart.h"
+
 // USB includes
 #include "usbd_cdc_core.h"
 #include "usbd_usr.h"
@@ -72,6 +74,10 @@ int main(void) {
  */
 void softTimerCallback(void) {
   LED_Toggle(LED0); // Toggle LED
-  printf("Test string sent from STM32F4!!!\r\n"); // Print test string
+
+  uint8_t* str = "Test string sent from STM32F4!!!\r\n";
+
+  VCP_DataTx (str, strlen(str));
+  printf("%s", str); // Print test string
 
 }

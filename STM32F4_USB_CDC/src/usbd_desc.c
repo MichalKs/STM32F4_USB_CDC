@@ -208,6 +208,7 @@ uint8_t *  USBD_USR_LangIDStrDescriptor( uint8_t speed , uint16_t *length)
 }
 
 
+
 /**
 * @brief  USBD_USR_ProductStrDescriptor 
 *         return the product string descriptor
