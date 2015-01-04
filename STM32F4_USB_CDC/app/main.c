@@ -45,7 +45,6 @@ void softTimerCallback(void);
 #define println(str, args...) (void)0
 #endif
 
-
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE USB_OTG_dev __ALIGN_END; ///< USB device handle
 
 /**
@@ -137,8 +136,8 @@ void softTimerCallback(void) {
 
   }
 
+  // print a string to USB COM port
   char* str = "Test string sent from STM32F4!!!\r\n";
-
   VCP_DataTx (str, strlen(str));
 
   println("Test string sent from STM32F4!!!"); // Print test string
