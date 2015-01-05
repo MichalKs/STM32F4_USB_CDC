@@ -34,6 +34,17 @@
 #include "usb_conf.h"
 #include <stdio.h>
 
+
+#define DEBUG
+
+#ifdef DEBUG
+#define print(str, args...) printf(""str"%s",##args,"")
+#define println(str, args...) printf("VCP--> "str"%s",##args,"\r\n")
+#else
+#define print(str, args...) (void)0
+#define println(str, args...) (void)0
+#endif
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -140,9 +151,10 @@ static uint16_t VCP_DeInit(void)
   * @param  Len: Number of data to be sent (in bytes)
   * @retval Result of the opeartion (USBD_OK in all cases)
   */
-static uint16_t VCP_Ctrl (uint32_t Cmd, uint8_t* Buf, uint32_t Len)
+static uint16_t VCP_Ctrl (uint32_t cmd, uint8_t* Buf, uint32_t Len)
 { 
-  switch (Cmd)
+  println("Got command: %u", cmd);
+  switch (cmd)
   {
   case SEND_ENCAPSULATED_COMMAND:
     /* Not  needed for this driver */
@@ -258,16 +270,13 @@ uint16_t VCP_DataTx (uint8_t* buf, uint32_t len) {
   * @param  Len: Number of data received (in bytes)
   * @retval Result of the opeartion: USBD_OK if all operations are OK else VCP_FAIL
   */
-static uint16_t VCP_DataRx (uint8_t* Buf, uint32_t Len)
+static uint16_t VCP_DataRx (uint8_t* buf, uint32_t Len)
 {
   uint32_t i;
 
-  for (i = 0; i < Len; i++)
-  {
-
-    printf("%c", *(Buf + i) );
+  for (i = 0; i < Len; i++) {
+    USB_COMM_RxCallback(buf[i]);
   }
-  printf("\r\n");
  
   return USBD_OK;
 }

@@ -247,11 +247,13 @@ uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev)
     
     if (gintr_status.b.wkupintr)
     {
+
       retval |= DCD_HandleResume_ISR(pdev);
     }
     
     if (gintr_status.b.usbsuspend)
     {
+      printf("Suspend\r\n");
       retval |= DCD_HandleUSBSuspend_ISR(pdev);
     }
     if (gintr_status.b.sofintr)
@@ -405,11 +407,11 @@ static uint32_t DCD_HandleUSBSuspend_ISR(USB_OTG_CORE_HANDLE *pdev)
 	/*  switch-off the clocks */
     power.d32 = 0;
     power.b.stoppclk = 1;
-    USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);  
-    
+    USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);
+
     power.b.gatehclk = 1;
     USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);
-    
+
     /* Request to enter Sleep mode after exit from current ISR */
     SCB->SCR |= (SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk);
   }

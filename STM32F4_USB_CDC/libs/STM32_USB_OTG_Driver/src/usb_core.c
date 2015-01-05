@@ -99,7 +99,7 @@ static void USB_OTG_EnableCommonInt(USB_OTG_CORE_HANDLE *pdev)
   USB_OTG_WRITE_REG32( &pdev->regs.GREGS->GINTSTS, 0xFFFFFFFF);
   /* Enable the interrupts in the INTMSK */
   int_mask.b.wkupintr = 1;
-  int_mask.b.usbsuspend = 1; 
+  int_mask.b.usbsuspend = 1;
   
 #ifdef USE_OTG_MODE
   int_mask.b.otgintr = 1;

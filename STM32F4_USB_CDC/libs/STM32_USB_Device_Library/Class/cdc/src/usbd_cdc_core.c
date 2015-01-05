@@ -218,7 +218,7 @@ __ALIGN_BEGIN uint8_t usbd_cdc_CfgDesc[USB_CDC_CONFIG_DESC_SIZ]  __ALIGN_END =
   0x01,   /* bConfigurationValue: Configuration value */
   0x00,   /* iConfiguration: Index of string descriptor describing the configuration */
   0xC0,   /* bmAttributes: self powered */
-  0x32,   /* MaxPower 0 mA */
+  0x32,   /* MaxPower 100 mA */
   
   /*---------------------------------------------------------------------------*/
   
@@ -567,6 +567,7 @@ static uint8_t  usbd_cdc_Setup (void  *pdev,
       break;
       
     case USB_REQ_GET_INTERFACE :
+      printf("In function %s GET_INTERFACE\r\n", __FUNCTION__);
       USBD_CtlSendData (pdev,
                         (uint8_t *)&usbd_cdc_AltSet,
                         1);

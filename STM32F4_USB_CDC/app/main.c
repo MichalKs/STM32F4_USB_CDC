@@ -53,6 +53,8 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE USB_OTG_dev __ALIGN_END; ///< USB device handl
  */
 int main(void) {
 	
+//  __WFI();
+
   COMM_Init(COMM_BAUD_RATE); // initialize communication with PC
   println("Starting program"); // Print a string to terminal
 
@@ -77,12 +79,14 @@ int main(void) {
   // test another way of measuring time delays
   uint32_t softTimer = TIMER_GetTime(); // get start time for delay
 
+  USB_COMM_Init(); // initialize buffers for USB COM port
+
   // Initialize USB device stack
   USBD_Init(&USB_OTG_dev,
             USB_OTG_FS_CORE_ID,
-            &USR_desc,
-            &USBD_CDC_cb,
-            &USR_cb);
+            &USR_desc, // USB descriptors
+            &USBD_CDC_cb, // class callbacks
+            &USR_cb); // user callbacks
 
 	while (1) {
 
@@ -104,6 +108,30 @@ int main(void) {
 	      LED_ChangeState(LED0, LED_OFF);
 	    }
 	  }
+
+    if (!USB_COMM_GetFrame(buf, &len)) {
+      println("Got frame of length %d: %s", (int)len, (char*)buf);
+
+      // control LED0 from terminal
+
+//      if(!strcmp((char*)buf, "ATE1 E0")) {
+//        println("Got AT command");
+//        USB_COMM_Puts("OK\r\n");
+//      }
+
+      // AT commands
+      if (buf[0] == 'A' && buf[1] == 'T') {
+        println("Got AT command");
+        USB_COMM_Puts("OK\r\n");
+      }
+
+      if (!strcmp((char*)buf, ":LED0 ON")) {
+        LED_ChangeState(LED0, LED_ON);
+      }
+      if (!strcmp((char*)buf, ":LED0 OFF")) {
+        LED_ChangeState(LED0, LED_OFF);
+      }
+    }
 
 		TIMER_SoftTimersUpdate(); // run timers
 //		KEYS_Update(); // run keyboard
@@ -138,7 +166,7 @@ void softTimerCallback(void) {
 
   // print a string to USB COM port
   char* str = "Test string sent from STM32F4!!!\r\n";
-  VCP_DataTx (str, strlen(str));
+  USB_COMM_Puts(str, strlen(str));
 
   println("Test string sent from STM32F4!!!"); // Print test string
 	counter++;

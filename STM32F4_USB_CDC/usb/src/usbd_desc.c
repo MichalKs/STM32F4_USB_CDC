@@ -25,74 +25,32 @@
   ******************************************************************************
   */ 
 
-/* Includes ------------------------------------------------------------------*/
 #include "usbd_core.h"
 #include "usbd_desc.h"
 #include "usbd_req.h"
-#include "usbd_conf.h"
-#include "usb_regs.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup USBD_DESC 
-  * @brief USBD descriptors module
-  * @{
-  */ 
-
-/** @defgroup USBD_DESC_Private_TypesDefinitions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Defines
-  * @{
-  */ 
 #define USBD_VID                        0x0483
-
 #define USBD_PID                        0x5740
 
-/** @defgroup USB_String_Descriptors
-  * @{
-  */ 
 #define USBD_LANGID_STRING              0x409
-#define USBD_MANUFACTURER_STRING        "STMicroelectronics"
+#define USBD_MANUFACTURER_STRING        (uint8_t*)"STMicroelectronics"
 
-#define USBD_PRODUCT_HS_STRING          "STM32 Virtual ComPort in HS mode"
-#define USBD_SERIALNUMBER_HS_STRING     "00000000050B"
+#define USBD_PRODUCT_HS_STRING          (uint8_t*)"STM32 Virtual ComPort in HS mode"
+#define USBD_SERIALNUMBER_HS_STRING     (uint8_t*)"00000000050B"
 
-#define USBD_PRODUCT_FS_STRING          "STM32 Virtual ComPort in FS Mode"
-#define USBD_SERIALNUMBER_FS_STRING     "00000000050C"
+#define USBD_PRODUCT_FS_STRING          (uint8_t*)"STM32 Virtual ComPort in FS Mode"
+#define USBD_SERIALNUMBER_FS_STRING     (uint8_t*)"00000000050C"
 
-#define USBD_CONFIGURATION_HS_STRING    "VCP Config"
-#define USBD_INTERFACE_HS_STRING        "VCP Interface"
+#define USBD_CONFIGURATION_HS_STRING    (uint8_t*)"VCP Config"
+#define USBD_INTERFACE_HS_STRING        (uint8_t*)"VCP Interface"
 
-#define USBD_CONFIGURATION_FS_STRING    "VCP Config"
-#define USBD_INTERFACE_FS_STRING        "VCP Interface"
+#define USBD_CONFIGURATION_FS_STRING    (uint8_t*)"VCP Config"
+#define USBD_INTERFACE_FS_STRING        (uint8_t*)"VCP Interface"
+
 /**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Variables
-  * @{
-  */ 
-
-USBD_DEVICE USR_desc =
-{
+ *
+ */
+USBD_DEVICE USR_desc = {
   USBD_USR_DeviceDescriptor,
   USBD_USR_LangIDStrDescriptor, 
   USBD_USR_ManufacturerStrDescriptor,
@@ -103,42 +61,37 @@ USBD_DEVICE USR_desc =
   
 };
 
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-/* USB Standard Device Descriptor */
-__ALIGN_BEGIN uint8_t USBD_DeviceDesc[USB_SIZ_DEVICE_DESC] __ALIGN_END =
-  {
-    0x12,                       /*bLength */
-    USB_DEVICE_DESCRIPTOR_TYPE, /*bDescriptorType*/
-    0x00,                       /*bcdUSB */
+/**
+ * @brief USB device descriptor
+ */
+uint8_t USBD_DeviceDesc[USB_SIZ_DEVICE_DESC] = {
+    0x12,                       // bLength - size of descriptor in bytes
+    USB_DEVICE_DESCRIPTOR_TYPE, // bDescriptorType - descriptor type
+    0x00,                       // bcdUSB - USB 2.0
+    0x02,                       // bcdUSB - USB 2.0
+    0x00,                       // bDeviceClass - 0 => each interface specifies own class code
+    0x00,                       // bDeviceSubClass
+    0x00,                       // bDeviceProtocol
+    USB_OTG_MAX_EP0_SIZE,       // bMaxPacketSize - maximum packet size for EP0
+    LOBYTE(USBD_VID),           // idVendor Vendor ID
+    HIBYTE(USBD_VID),           // idVendor Vendor ID
+    LOBYTE(USBD_PID),           // idProduct Product ID
+    HIBYTE(USBD_PID),           // idProduct Product ID
+    0x00,                       // bcdDevice rel. 1.00 - device release number
     0x02,
-    0x00,                       /*bDeviceClass*/
-    0x00,                       /*bDeviceSubClass*/
-    0x00,                       /*bDeviceProtocol*/
-    USB_OTG_MAX_EP0_SIZE,      /*bMaxPacketSize*/
-    LOBYTE(USBD_VID),           /*idVendor*/
-    HIBYTE(USBD_VID),           /*idVendor*/
-    LOBYTE(USBD_PID),           /*idVendor*/
-    HIBYTE(USBD_PID),           /*idVendor*/
-    0x00,                       /*bcdDevice rel. 2.00*/
-    0x02,
-    USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
-    USBD_IDX_PRODUCT_STR,       /*Index of product string*/
-    USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
-    USBD_CFG_MAX_NUM            /*bNumConfigurations*/
-  } ; /* USB_DeviceDescriptor */
+    USBD_IDX_MFC_STR,           // Index of manufacturer  string
+    USBD_IDX_PRODUCT_STR,       // Index of product string
+    USBD_IDX_SERIAL_STR,        // Index of serial number string
+    USBD_CFG_MAX_NUM            // bNumConfigurations - only 1 configuration
+};
 
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-/* USB Standard Device Descriptor */
-__ALIGN_BEGIN uint8_t USBD_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END =
-{
+/**
+ * @brief USB Standard Device Descriptor
+ *
+ * @details This is for HS only. The device doesn't respond to
+ * a request of this descriptor (malformed packet in Wireshark!!!).
+ */
+uint8_t USBD_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] = {
   USB_LEN_DEV_QUALIFIER_DESC,
   USB_DESC_TYPE_DEVICE_QUALIFIER,
   0x00,
@@ -150,36 +103,15 @@ __ALIGN_BEGIN uint8_t USBD_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] __ALI
   0x01,
   0x00,
 };
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-/* USB Standard Device Descriptor */
-__ALIGN_BEGIN uint8_t USBD_LangIDDesc[USB_SIZ_STRING_LANGID] __ALIGN_END =
-{
+/**
+ * @brief USB Standard Device Descriptor
+ */
+uint8_t USBD_LangIDDesc[USB_SIZ_STRING_LANGID] = {
      USB_SIZ_STRING_LANGID,         
      USB_DESC_TYPE_STRING,       
      LOBYTE(USBD_LANGID_STRING),
      HIBYTE(USBD_LANGID_STRING), 
 };
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_FunctionPrototypes
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-/** @defgroup USBD_DESC_Private_Functions
-  * @{
-  */ 
 
 /**
 * @brief  USBD_USR_DeviceDescriptor 
@@ -304,20 +236,3 @@ uint8_t *  USBD_USR_InterfaceStrDescriptor( uint8_t speed , uint16_t *length)
   }
   return USBD_StrDesc;  
 }
-
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-
-/**
-  * @}
-  */ 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

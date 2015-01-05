@@ -1,0 +1,28 @@
+
+
+
+Various notes:
+***********************************************************************
+When using UBUNTU 14.04 I found that the modemmanager service
+tries to send various AT commands to the STM32F4 USB interface 
+(/dev/ttyACM0). To avoid getting these commands run:
+$ sudo stop modemmanager
+
+For permanent solution:
+sudo vi /etc/udev/rules.d/40-myusbdev.rules
+
+Add following line to the file:
+ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5710", ENV{ID_MM_DEVICE_IGNORE}="1"
+
+Save and run:
+sudo udevadm control --reload-rules
+
+***********************************************************************
+To monitor USB traffic using wireshark run:
+sudo modprobe usbmon
+
+and then run wireshark as root to capture USB packets.
+
+To filter the USB traffic for your device add the following filter:
+usb.device_address == your_device_number_as_per_lsusb_command
+

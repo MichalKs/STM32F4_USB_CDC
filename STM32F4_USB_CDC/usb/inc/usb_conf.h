@@ -30,23 +30,8 @@
 #define __USB_CONF__H__
 
 /* Includes ------------------------------------------------------------------*/
-#if defined (USE_STM322xG_EVAL)
- #include "stm322xg_eval.h"
- #include "stm322xg_eval_lcd.h"
- #include "stm322xg_eval_ioe.h"
- #include "stm322xg_eval_sdio_sd.h"
-#elif defined(USE_STM324xG_EVAL)
- #include "stm32f4xx.h"
-#elif defined (USE_STM3210C_EVAL)
- #include "stm32f10x.h"
- #include "stm3210c_eval.h" 
- #include "stm3210c_eval_lcd.h"
- #include "stm3210c_eval_ioe.h"
- #include "stm3210c_eval_spi_sd.h"
-#else
- #error "Missing define: Evaluation board (ie. USE_STM322xG_EVAL)"
-#endif
-
+#include <inttypes.h>
+#include <stm32f4xx.h>
 
 /** @addtogroup USB_OTG_DRIVER
   * @{
@@ -224,35 +209,15 @@
 /****************** C Compilers dependant keywords ****************************/
 /* In HS mode and when the DMA is used, all variables and data structures dealing
    with the DMA during the transaction process should be 4-bytes aligned */    
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined   (__GNUC__)        /* GNU Compiler */
-    #define __ALIGN_END    __attribute__ ((aligned (4)))
-    #define __ALIGN_BEGIN         
-  #else                           
-    #define __ALIGN_END
-    #if defined   (__CC_ARM)      /* ARM Compiler */
-      #define __ALIGN_BEGIN    __align(4)  
-    #elif defined (__ICCARM__)    /* IAR Compiler */
-      #define __ALIGN_BEGIN 
-    #elif defined  (__TASKING__)  /* TASKING Compiler */
-      #define __ALIGN_BEGIN    __align(4) 
-    #endif /* __CC_ARM */  
-  #endif /* __GNUC__ */ 
-#else
-  #define __ALIGN_BEGIN
-  #define __ALIGN_END   
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+
+#define __ALIGN_BEGIN
+#define __ALIGN_END
 
 /* __packed keyword used to decrease the data type alignment to 1-byte */
-#if defined (__CC_ARM)         /* ARM Compiler */
-  #define __packed    __packed
-#elif defined (__ICCARM__)     /* IAR Compiler */
-  #define __packed    __packed
-#elif defined   ( __GNUC__ )   /* GNU Compiler */                        
+
+#ifndef __packed
   #define __packed    __attribute__ ((__packed__))
-#elif defined   (__TASKING__)  /* TASKING Compiler */
-  #define __packed    __unaligned
-#endif /* __CC_ARM */
+#endif
 
 /**
   * @}

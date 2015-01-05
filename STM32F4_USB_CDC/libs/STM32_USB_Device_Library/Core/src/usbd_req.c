@@ -23,7 +23,17 @@
 #include "usbd_req.h"
 #include "usbd_ioreq.h"
 #include "usbd_desc.h"
+#include <stdio.h>
 
+#define DEBUG
+
+#ifdef DEBUG
+#define print(str, args...) printf(""str"%s",##args,"")
+#define println(str, args...) printf("USB_REQ--> "str"%s",##args,"\r\n")
+#else
+#define print(str, args...) (void)0
+#define println(str, args...) (void)0
+#endif
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{
@@ -366,13 +376,17 @@ static void USBD_GetDescriptor(USB_OTG_CORE_HANDLE  *pdev,
   {
   case USB_DESC_TYPE_DEVICE:
     pbuf = pdev->dev.usr_device->GetDeviceDescriptor(pdev->cfg.speed, &len);
+
+    println("Sending device descriptor");
     if ((req->wLength == 64) ||( pdev->dev.device_status == USB_OTG_DEFAULT))  
     {                  
+      println("Wlen = 64");
       len = 8;
     }
     break;
     
   case USB_DESC_TYPE_CONFIGURATION:
+    println("Sending configuration descriptor");
       pbuf   = (uint8_t *)pdev->dev.class_cb->GetConfigDescriptor(pdev->cfg.speed, &len);
 #ifdef USB_OTG_HS_CORE
     if((pdev->cfg.speed == USB_OTG_SPEED_FULL )&&
