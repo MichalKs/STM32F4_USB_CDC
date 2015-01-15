@@ -52,8 +52,6 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE USB_OTG_dev __ALIGN_END; ///< USB device handl
  * @return None
  */
 int main(void) {
-	
-//  __WFI();
 
   COMM_Init(COMM_BAUD_RATE); // initialize communication with PC
   println("Starting program"); // Print a string to terminal

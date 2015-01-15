@@ -182,7 +182,7 @@ static uint16_t VCP_Ctrl (uint32_t cmd, uint8_t* Buf, uint32_t Len)
     linecoding.paritytype = Buf[5];
     linecoding.datatype = Buf[6];
     /* Set the new configuration */
-    VCP_COMConfig(OTHER_CONFIG);
+//    VCP_COMConfig(OTHER_CONFIG);
     break;
 
   case GET_LINE_CODING:
@@ -222,6 +222,8 @@ uint16_t VCP_DataTx (uint8_t* buf, uint32_t len) {
 
   int i;
 
+  printf("Line coding %d\r\n", linecoding.datatype);
+
   if (linecoding.datatype == 7) {
     for (i=0; i< len; i++) {
       APP_Rx_Buffer[APP_Rx_ptr_in] = buf[i] & 0x7F;
@@ -238,6 +240,19 @@ uint16_t VCP_DataTx (uint8_t* buf, uint32_t len) {
 
   } else if (linecoding.datatype == 8) {
 
+    for (i=0; i< len; i++) {
+      APP_Rx_Buffer[APP_Rx_ptr_in] = buf[i];
+
+      APP_Rx_ptr_in++;
+
+      /* To avoid buffer overflow */
+      if(APP_Rx_ptr_in == APP_RX_DATA_SIZE)
+      {
+        APP_Rx_ptr_in = 0;
+      }
+
+    }
+  } else {
     for (i=0; i< len; i++) {
       APP_Rx_Buffer[APP_Rx_ptr_in] = buf[i];
 
