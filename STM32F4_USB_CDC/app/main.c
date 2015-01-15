@@ -130,7 +130,6 @@ int main(void) {
         LED_ChangeState(LED0, LED_OFF);
       }
     }
-
 		TIMER_SoftTimersUpdate(); // run timers
 //		KEYS_Update(); // run keyboard
 	}

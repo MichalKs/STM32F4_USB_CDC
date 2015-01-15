@@ -221,16 +221,19 @@ uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev)
     
     if (gintr_status.b.outepintr)
     {
+      printf("++++OUT\r\n");
       retval |= DCD_HandleOutEP_ISR(pdev);
     }    
     
     if (gintr_status.b.inepint)
     {
+//      printf("++++IN\r\n");
       retval |= DCD_HandleInEP_ISR(pdev);
     }
     
     if (gintr_status.b.modemismatch)
     {
+      printf("++++MODE\r\n");
       USB_OTG_GINTSTS_TypeDef  gintsts;
       
       /* Clear interrupt */
@@ -241,52 +244,62 @@ uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev)
     
     if (gintr_status.b.wkupintr)
     {
+      printf("++++WKUP\r\n");
       retval |= DCD_HandleResume_ISR(pdev);
     }
     
     if (gintr_status.b.usbsuspend)
     {
+      printf("++++SUSPEND\r\n");
       retval |= DCD_HandleUSBSuspend_ISR(pdev);
     }
     if (gintr_status.b.sofintr)
     {
+//      printf("++++SOFTIRQ\r\n");
       retval |= DCD_HandleSof_ISR(pdev);
       
     }
     
     if (gintr_status.b.rxstsqlvl)
     {
+      printf("++++rx\r\n");
       retval |= DCD_HandleRxStatusQueueLevel_ISR(pdev);
       
     }
     
     if (gintr_status.b.usbreset)
     {
+      printf("++++RST\r\n");
       retval |= DCD_HandleUsbReset_ISR(pdev);
       
     }
     if (gintr_status.b.enumdone)
     {
+      printf("++++ENUM\r\n");
       retval |= DCD_HandleEnumDone_ISR(pdev);
     }
     
     if (gintr_status.b.incomplisoin)
     {
+      printf("++++Incomplin\r\n");
       retval |= DCD_IsoINIncomplete_ISR(pdev);
     }
 
     if (gintr_status.b.incomplisoout)
     {
+      printf("++++Incompliout\r\n");
       retval |= DCD_IsoOUTIncomplete_ISR(pdev);
     }    
 #ifdef VBUS_SENSING_ENABLED
     if (gintr_status.b.sessreqintr)
     {
+      printf("++++sessreq\r\n");
       retval |= DCD_SessionRequest_ISR(pdev);
     }
 
     if (gintr_status.b.otgintr)
     {
+      printf("++++Otg\r\n");
       retval |= DCD_OTG_ISR(pdev);
     }   
 #endif    
@@ -403,7 +416,7 @@ static uint32_t DCD_HandleUSBSuspend_ISR(USB_OTG_CORE_HANDLE *pdev)
 	/*  switch-off the clocks */
     power.d32 = 0;
     power.b.stoppclk = 1;
-    USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);  
+    USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);
     
     power.b.gatehclk = 1;
     USB_OTG_MODIFY_REG32(pdev->regs.PCGCCTL, 0, power.d32);
@@ -434,9 +447,12 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev)
   {
     if (ep_intr&0x1) /* In ITR */
     {
+
+//      printf("Epnum %d\r\n", epnum);
       diepint.d32 = DCD_ReadDevInEP(pdev , epnum); /* Get In ITR status */
       if ( diepint.b.xfercompl )
       {
+        printf("xfer %d\r\n", epnum);
         fifoemptymsk = 0x1 << epnum;
         USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK, fifoemptymsk, 0);
         CLEAR_IN_EP_INTR(epnum, xfercompl);
@@ -454,25 +470,30 @@ static uint32_t DCD_HandleInEP_ISR(USB_OTG_CORE_HANDLE *pdev)
       }
       if ( diepint.b.timeout )
       {
+        printf("timeout %d\r\n", epnum);
         CLEAR_IN_EP_INTR(epnum, timeout);
       }
       if (diepint.b.intktxfemp)
       {
+        printf("intktx %d\r\n", epnum);
         CLEAR_IN_EP_INTR(epnum, intktxfemp);
       }
       if (diepint.b.inepnakeff)
       {
+        printf("inep %d\r\n", epnum);
         CLEAR_IN_EP_INTR(epnum, inepnakeff);
       }
       if ( diepint.b.epdisabled )
       {
+        printf("disable %d\r\n", epnum);
         CLEAR_IN_EP_INTR(epnum, epdisabled);
       }       
       if (diepint.b.emptyintr)
       {
-        
+//        printf("empty %d\r\n", epnum);
+
         DCD_WriteEmptyTxFifo(pdev , epnum);
-        
+
         CLEAR_IN_EP_INTR(epnum, emptyintr);
       }
     }
@@ -675,6 +696,12 @@ static uint32_t DCD_WriteEmptyTxFifo(USB_OTG_CORE_HANDLE *pdev, uint32_t epnum)
     ep->xfer_buff  += len;
     ep->xfer_count += len;
     
+    if( ep->xfer_count >= ep->xfer_len){
+      uint32_t fifoemptymsk = 1 << epnum;
+      USB_OTG_MODIFY_REG32(&pdev->regs.DREGS->DIEPEMPMSK, fifoemptymsk, 0);
+      break;
+    }
+
     txstatus.d32 = USB_OTG_READ_REG32(&pdev->regs.INEP_REGS[epnum]->DTXFSTS);
   }
   
